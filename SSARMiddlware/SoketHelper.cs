@@ -1,4 +1,4 @@
-﻿using System.Web.Configuration;
+﻿using System.Configuration;
 using WebSocketSharp.Server;
 
 namespace SSARMiddlware
@@ -9,8 +9,8 @@ namespace SSARMiddlware
 
         public static void Initialize()
         {
-            string ip = WebConfigurationManager.AppSettings["ip"];
-            string port = WebConfigurationManager.AppSettings["port"];
+            string ip = ConfigurationManager.AppSettings["ip"];
+            string port = ConfigurationManager.AppSettings["port"];
             string url = ip + ":" + port;
             WebSocketServer = new WebSocketServer(url);
         }
