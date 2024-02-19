@@ -1,29 +1,28 @@
-﻿using WebSocketSharp.Server;
+﻿using System.Web.Configuration;
+using WebSocketSharp.Server;
 
 namespace SSARMiddlware
 {
     internal static class SoketHelper
     {
-        public static WebSocketServer ws;
-        private static string _url = "ws://127.0.0.1:8080";
+        public static WebSocketServer WebSocketServer;
 
-        public static void Initialize(string url = null)
+        public static void Initialize()
         {
-            if (!string.IsNullOrWhiteSpace(url))
-            {
-                _url = url;
-            }
-            ws = new WebSocketServer(_url);
+            string ip = WebConfigurationManager.AppSettings["ip"];
+            string port = WebConfigurationManager.AppSettings["port"];
+            string url = ip + ":" + port;
+            WebSocketServer = new WebSocketServer(url);
         }
 
         public static void Start()
         {
-            ws.Start();
+            WebSocketServer.Start();
         }
 
         public static void Stop()
         {
-            ws.Stop();
+            WebSocketServer.Stop();
         }
     }
 }

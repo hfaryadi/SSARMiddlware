@@ -8,8 +8,6 @@ namespace SSARMiddlware
         public SSARMiddlware()
         {
             InitializeComponent();
-            SoketHelper.Initialize("ws://127.0.0.1:7998");
-            AddServices();
         }
 
         public void onDebug()
@@ -19,6 +17,8 @@ namespace SSARMiddlware
 
         protected override void OnStart(string[] args)
         {
+            SoketHelper.Initialize();
+            AddServices();
             SoketHelper.Start();
         }
 
@@ -29,7 +29,7 @@ namespace SSARMiddlware
 
         private void AddServices()
         {
-            SoketHelper.ws.AddWebSocketService<PaymentService>("/Payment");
+            SoketHelper.WebSocketServer.AddWebSocketService<PaymentService>("/Payment");
         }
     }
 }
