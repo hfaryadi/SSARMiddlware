@@ -2,6 +2,7 @@
 {
     internal interface IBaseService
     {
+        void TokenValidation(string token, string request);
         void Execute();
     }
 }

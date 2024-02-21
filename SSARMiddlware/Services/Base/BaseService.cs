@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
+using SSARMiddlware.Interfaces.Base;
 using SSARMiddlware.ViewModels.Base;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
 namespace SSARMiddlware.Services.Base
 {
-    internal class BaseService<TRequest, TResponse> : WebSocketBehavior
+    internal class BaseService<TRequest, TResponse> : WebSocketBehavior, IBaseService
     {
         public TRequest Request;
         public BaseResponse<TResponse> Response;
