@@ -2,6 +2,6 @@
 {
     internal class PaymentRequestViewModel
     {
-        public string Price { get; set; }
+        public long Price { get; set; }
     }
 }

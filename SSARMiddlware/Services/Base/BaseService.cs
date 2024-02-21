@@ -13,27 +13,36 @@ namespace SSARMiddlware.Services.Base
 
         protected override void OnMessage(MessageEventArgs e)
         {
-            var token = Context.QueryString["Authorization"];
-            TokenValidation(token, e.Data);
+            
+            TokenValidation(e.Data);
         }
 
-        public void TokenValidation(string token, string request)
+        private void TokenValidation(string request)
         {
+            var token = Context.QueryString["Authorization"];
             Request = JsonConvert.DeserializeObject<TRequest>(request);
             Response = new BaseResponse<TResponse>();
             if (!JwtHelper.IsValidToken(token))
             {
                 Response.Code = System.Net.HttpStatusCode.Unauthorized;
-                Response.Messages.Add("Invalid Token");
+                Response.Messages.Add("توکن نا معتبر می باشد");
                 var json = JsonConvert.SerializeObject(Response);
                 Send(json);
             }
             else
             {
-                Execute();
+                if (Validation())
+                {
+                    Execute();
+                }
                 var json = JsonConvert.SerializeObject(Response);
                 Send(json);
             }
+        }
+
+        public virtual bool Validation()
+        {
+            return true;
         }
 
         public virtual void Execute()
