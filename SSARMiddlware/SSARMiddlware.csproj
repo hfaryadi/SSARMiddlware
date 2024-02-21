@@ -99,10 +99,10 @@
     <Compile Include="Services\Base\BaseService.cs" />
     <Compile Include="Services\ScannerService.cs" />
     <Compile Include="ViewModels\Base\BaseResponse.cs" />
-    <Compile Include="ViewModels\Payment\PaymentRequestViewModel.cs" />
+    <Compile Include="ViewModels\Poz\PozRequestViewModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\PaymentService.cs" />
+    <Compile Include="Services\PozService.cs" />
     <Compile Include="SoketHelper.cs" />
     <Compile Include="SSARMiddlware.cs">
       <SubType>Component</SubType>
@@ -110,7 +110,7 @@
     <Compile Include="SSARMiddlware.Designer.cs">
       <DependentUpon>SSARMiddlware.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\Payment\PaymentResponseViewModel.cs" />
+    <Compile Include="ViewModels\Poz\PozResponseViewModel.cs" />
     <Compile Include="ViewModels\Scanner\ScannerRequestViewModel.cs" />
     <Compile Include="ViewModels\Scanner\ScannerResponseViewModel.cs" />
   </ItemGroup>

@@ -29,7 +29,7 @@ namespace SSARMiddlware
 
         private void AddServices()
         {
-            SoketHelper.WebSocketServer.AddWebSocketService<PaymentService>("/Payment");
+            SoketHelper.WebSocketServer.AddWebSocketService<PozService>("/Poz");
             SoketHelper.WebSocketServer.AddWebSocketService<ScannerService>("/Scanner");
         }
     }

@@ -1,6 +1,6 @@
-﻿namespace SSARMiddlware.ViewModels.Payment
+﻿namespace SSARMiddlware.ViewModels.Poz
 {
-    internal class PaymentResponseViewModel
+    internal class PozResponseViewModel
     {
         public string Id { get; set; }
         public long Price { get; set; }

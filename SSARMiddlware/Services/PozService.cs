@@ -1,9 +1,9 @@
 ﻿using SSARMiddlware.Services.Base;
-using SSARMiddlware.ViewModels.Payment;
+using SSARMiddlware.ViewModels.Poz;
 
 namespace SSARMiddlware.Services
 {
-    internal class PaymentService : BaseService<PaymentRequestViewModel, PaymentResponseViewModel>
+    internal class PozService : BaseService<PozRequestViewModel, PozResponseViewModel>
     {
         public override bool Validation()
         {
@@ -18,7 +18,7 @@ namespace SSARMiddlware.Services
 
         public override void Execute()
         {
-            Response.Data = new PaymentResponseViewModel()
+            Response.Data = new PozResponseViewModel()
             {
                 Id = "1234",
                 Price = Request.Price,
