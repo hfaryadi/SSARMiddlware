@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SSARMiddlware.Interfaces.Base;
 using SSARMiddlware.ViewModels.Base;
+using System;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
@@ -13,31 +14,53 @@ namespace SSARMiddlware.Services.Base
 
         protected override void OnMessage(MessageEventArgs e)
         {
-            
-            TokenValidation(e.Data);
-        }
-
-        private void TokenValidation(string request)
-        {
-            var token = Context.QueryString["Authorization"];
-            Request = JsonConvert.DeserializeObject<TRequest>(request);
-            Response = new BaseResponse<TResponse>();
-            if (!JwtHelper.IsValidToken(token))
+            try
             {
-                Response.Code = System.Net.HttpStatusCode.Unauthorized;
-                Response.Messages.Add("توکن نا معتبر می باشد");
+                Response = new BaseResponse<TResponse>();
+                if (!string.IsNullOrWhiteSpace(e.Data))
+                {
+                    Request = JsonConvert.DeserializeObject<TRequest>(e.Data);
+                }
+                TokenValidation();
+            }
+            catch (Exception ex)
+            {
+                Response.Code = System.Net.HttpStatusCode.InternalServerError;
+                Response.Messages.Add(ex.Message.ToString());
                 var json = JsonConvert.SerializeObject(Response);
                 Send(json);
+            }
+        }
+
+        private void TokenValidation()
+        {
+            var token = Context.QueryString["Authorization"];
+            if (!JwtHelper.IsValidToken(token))
+            {
+                Reject();
             }
             else
             {
-                if (Validation())
-                {
-                    Execute();
-                }
-                var json = JsonConvert.SerializeObject(Response);
-                Send(json);
+                Accept();
             }
+        }
+
+        private void Reject()
+        {
+            Response.Code = System.Net.HttpStatusCode.Unauthorized;
+            Response.Messages.Add("توکن نا معتبر می باشد");
+            var json = JsonConvert.SerializeObject(Response);
+            Send(json);
+        }
+
+        private void Accept()
+        {
+            if (Validation())
+            {
+                Execute();
+            }
+            var json = JsonConvert.SerializeObject(Response);
+            Send(json);
         }
 
         public virtual bool Validation()
@@ -49,6 +72,5 @@ namespace SSARMiddlware.Services.Base
         {
 
         }
-
     }
 }
