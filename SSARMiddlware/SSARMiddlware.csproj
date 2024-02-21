@@ -94,6 +94,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientHelper.cs" />
     <Compile Include="Interfaces\Base\IBaseService.cs" />
     <Compile Include="JwtHelper.cs" />
     <Compile Include="Services\Base\BaseService.cs" />
