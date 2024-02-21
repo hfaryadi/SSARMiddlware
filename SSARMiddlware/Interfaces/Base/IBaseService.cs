@@ -1,7 +1,7 @@
 ﻿namespace SSARMiddlware.Interfaces.Base
 {
-    internal interface IBaseService<TResponse>
+    internal interface IBaseService
     {
-        void TokenValidation(string token);
+        void Execute();
     }
 }
