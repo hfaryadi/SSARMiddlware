@@ -1,23 +1,27 @@
 ﻿using Newtonsoft.Json;
+using SSARMiddlware.Services.Base;
 using SSARMiddlware.ViewModels.Payment;
 using WebSocketSharp;
-using WebSocketSharp.Server;
 
 namespace SSARMiddlware.Services
 {
-    internal class PaymentService : WebSocketBehavior
+    internal class PaymentService : BaseService<PaymentRequestViewModel, PaymentResponseViewModel>
     {
         protected override void OnMessage(MessageEventArgs e)
         {
-            var request = JsonConvert.DeserializeObject<PaymentRequestViewModel>(e.Data);
-            var response = new PaymentResponseViewModel()
+            base.OnMessage(e);
+            if (IsTokenValid)
             {
-                Id = "1234",
-                Price = request.Price,
-                IsPaid = true
-            };
-            var responseJson = JsonConvert.SerializeObject(response);
-            Send(responseJson);
+                var paymentResponse = new PaymentResponseViewModel()
+                {
+                    Id = "1234",
+                    Price = Request.Price,
+                    IsPaid = true
+                };
+                Response.Data = paymentResponse;
+                var json = JsonConvert.SerializeObject(Response);
+                Send(json);
+            }
         }
     }
 }
