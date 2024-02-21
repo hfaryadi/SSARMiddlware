@@ -97,6 +97,7 @@
     <Compile Include="Interfaces\Base\IBaseService.cs" />
     <Compile Include="JwtHelper.cs" />
     <Compile Include="Services\Base\BaseService.cs" />
+    <Compile Include="Services\ScannerService.cs" />
     <Compile Include="ViewModels\Base\BaseResponse.cs" />
     <Compile Include="ViewModels\Payment\PaymentRequestViewModel.cs" />
     <Compile Include="Program.cs" />
@@ -110,6 +111,8 @@
       <DependentUpon>SSARMiddlware.cs</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\Payment\PaymentResponseViewModel.cs" />
+    <Compile Include="ViewModels\Scanner\ScannerRequestViewModel.cs" />
+    <Compile Include="ViewModels\Scanner\ScannerResponseViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

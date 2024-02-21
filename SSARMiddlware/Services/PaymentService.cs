@@ -18,13 +18,12 @@ namespace SSARMiddlware.Services
 
         public override void Execute()
         {
-            var paymentResponse = new PaymentResponseViewModel()
+            Response.Data = new PaymentResponseViewModel()
             {
                 Id = "1234",
                 Price = Request.Price,
                 IsPaid = true
             };
-            Response.Data = paymentResponse;
         }
     }
 }
