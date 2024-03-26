@@ -7,17 +7,6 @@ namespace SSARMiddlware.Services
 {
     internal class ScannerService : BaseService<ScannerRequestViewModel, ScannerResponseViewModel>
     {
-        public override bool Validation()
-        {
-            //if (Request.PageNumber < 1)
-            //{
-            //    Response.Code = System.Net.HttpStatusCode.BadRequest;
-            //    Response.Messages.Add("شماره صفحه نا معتبر می باشد");
-            //    return false;
-            //}
-            return true;
-        }
-
         public override void Execute()
         {
             var imgBase64 = Scan();
@@ -54,6 +43,8 @@ namespace SSARMiddlware.Services
                 var device = firstScannerAvailable.Connect();
 
                 var scannerItem = device.Items[1];
+
+                AdjustScannerSettings(scannerItem, 0, 0, 1, 150,  1250, 1700, 0, 0);
 
                 CommonDialogClass dlg = new CommonDialogClass();
                 object scanResult = dlg.ShowTransfer(scannerItem, WIA.FormatID.wiaFormatPNG, true);
@@ -95,6 +86,34 @@ namespace SSARMiddlware.Services
                 }
                 return null;
             }
+        }
+
+        private static void AdjustScannerSettings(IItem scannnerItem, int scanStartLeftPixel, int scanStartTopPixel, int colorMode, int scanResolutionDPI, int scanWidthPixels, int scanHeightPixels, int brightnessPercents, int contrastPercents)
+        {
+            const string WIA_HORIZONTAL_SCAN_START_PIXEL = "6149";
+            const string WIA_VERTICAL_SCAN_START_PIXEL = "6150";
+            const string WIA_SCAN_COLOR_MODE = "6146";
+            const string WIA_HORIZONTAL_SCAN_RESOLUTION_DPI = "6147";
+            const string WIA_VERTICAL_SCAN_RESOLUTION_DPI = "6148";
+            const string WIA_HORIZONTAL_SCAN_SIZE_PIXELS = "6151";
+            const string WIA_VERTICAL_SCAN_SIZE_PIXELS = "6152";
+            const string WIA_SCAN_BRIGHTNESS_PERCENTS = "6154";
+            const string WIA_SCAN_CONTRAST_PERCENTS = "6155";
+            SetWIAProperty(scannnerItem.Properties, WIA_HORIZONTAL_SCAN_START_PIXEL, scanStartLeftPixel);
+            SetWIAProperty(scannnerItem.Properties, WIA_VERTICAL_SCAN_START_PIXEL, scanStartTopPixel);
+            SetWIAProperty(scannnerItem.Properties, WIA_SCAN_COLOR_MODE, colorMode);
+            //SetWIAProperty(scannnerItem.Properties, WIA_HORIZONTAL_SCAN_RESOLUTION_DPI, scanResolutionDPI);
+            //SetWIAProperty(scannnerItem.Properties, WIA_VERTICAL_SCAN_RESOLUTION_DPI, scanResolutionDPI);
+            //SetWIAProperty(scannnerItem.Properties, WIA_HORIZONTAL_SCAN_SIZE_PIXELS, scanWidthPixels);
+            //SetWIAProperty(scannnerItem.Properties, WIA_VERTICAL_SCAN_SIZE_PIXELS, scanHeightPixels);
+            //SetWIAProperty(scannnerItem.Properties, WIA_SCAN_BRIGHTNESS_PERCENTS, brightnessPercents);
+            //SetWIAProperty(scannnerItem.Properties, WIA_SCAN_CONTRAST_PERCENTS, contrastPercents);
+        }
+
+        private static void SetWIAProperty(IProperties properties, object propName, object propValue)
+        {
+            Property prop = properties.get_Item(ref propName);
+            prop.set_Value(ref propValue);
         }
     }
 }

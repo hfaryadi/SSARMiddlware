@@ -2,6 +2,6 @@
 {
     internal class ScannerRequestViewModel
     {
-        //public int PageNumber { get; set; }
+        
     }
 }
