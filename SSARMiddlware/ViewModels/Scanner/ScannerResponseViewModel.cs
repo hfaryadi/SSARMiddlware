@@ -2,6 +2,7 @@
 {
     internal class ScannerResponseViewModel
     {
-        public bool PageScanned { get; set; }
+        public string ImageHeader { get; set; }
+        public byte[] Image { get; set; }
     }
 }
