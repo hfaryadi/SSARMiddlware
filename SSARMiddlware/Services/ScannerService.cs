@@ -1,6 +1,5 @@
 ﻿using SSARMiddlware.Services.Base;
 using SSARMiddlware.ViewModels.Scanner;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -13,16 +12,13 @@ namespace SSARMiddlware.Services
     {
         public override void Execute()
         {
-            var imgBase64 = ScanDoc();
-            Response.Data = new ScannerResponseViewModel()
-            {
-                ImageHeader = "data:image/jpeg;base64,",
-                Images = imgBase64
-            };
+            Response.Data = new ScannerResponseViewModel();
+            var image = ScanDoc();
+            ConvertTiffToJpeg(image);
             Send();
         }
 
-        private List<byte[]> ScanDoc()
+        private ImageFile ScanDoc()
         {
             try
             {
@@ -45,7 +41,8 @@ namespace SSARMiddlware.Services
                 }
                 ImageFile image = (ImageFile)scanResult;
                 //var convertedImage = ConvertImage(image, WIA.FormatID.wiaFormatTIFF);
-                return ConvertTiffToJpeg(image);
+                //return ConvertTiffToJpeg(image);
+                return image;
             }
             catch (COMException ex)
             {
@@ -118,9 +115,8 @@ namespace SSARMiddlware.Services
             return image;
         }
 
-        public static List<byte[]> ConvertTiffToJpeg(ImageFile image)
+        public void ConvertTiffToJpeg(ImageFile image)
         {
-            List<byte[]> imgs = new List<byte[]>();
             var imageBytes = (byte[])image.FileData.get_BinaryData();
             var ms = new MemoryStream(imageBytes);
             var imageFile = Image.FromStream(ms);
@@ -132,10 +128,13 @@ namespace SSARMiddlware.Services
                 using (Bitmap bmp = new Bitmap(imageFile))
                 {
                     ImageConverter converter = new ImageConverter();
-                    imgs.Add((byte[])converter.ConvertTo(bmp, typeof(byte[])));
+                    Response.Data.Images.Add(new Page()
+                    {
+                        Header = "data:image/jpeg;base64,",
+                        Image = (byte[])converter.ConvertTo(bmp, typeof(byte[]))
+                    });
                 }
             }
-            return imgs;
         }
 
         private enum ColorType

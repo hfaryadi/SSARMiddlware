@@ -4,7 +4,16 @@ namespace SSARMiddlware.ViewModels.Scanner
 {
     internal class ScannerResponseViewModel
     {
-        public string ImageHeader { get; set; }
-        public List<byte[]> Images { get; set; }
+        public ScannerResponseViewModel()
+        {
+            this.Images = new List<Page>();
+        }
+        public List<Page> Images { get; set; }
+    }
+
+    internal class Page
+    {
+        public string Header { get; set; }
+        public byte[] Image { get; set; }
     }
 }
