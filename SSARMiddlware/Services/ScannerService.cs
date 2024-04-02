@@ -1,5 +1,9 @@
 ﻿using SSARMiddlware.Services.Base;
 using SSARMiddlware.ViewModels.Scanner;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 using WIA;
 
@@ -13,12 +17,12 @@ namespace SSARMiddlware.Services
             Response.Data = new ScannerResponseViewModel()
             {
                 ImageHeader = "data:image/jpeg;base64,",
-                Image = imgBase64
+                Images = imgBase64
             };
             Send();
         }
 
-        private byte[] ScanDoc()
+        private List<byte[]> ScanDoc()
         {
             try
             {
@@ -40,9 +44,8 @@ namespace SSARMiddlware.Services
                     return null;
                 }
                 ImageFile image = (ImageFile)scanResult;
-                var convertedImage = ConvertImage(image, WIA.FormatID.wiaFormatJPEG);
-                byte[] imageBytes = (byte[])convertedImage.FileData.get_BinaryData();
-                return imageBytes;
+                //var convertedImage = ConvertImage(image, WIA.FormatID.wiaFormatTIFF);
+                return ConvertTiffToJpeg(image);
             }
             catch (COMException ex)
             {
@@ -113,6 +116,26 @@ namespace SSARMiddlware.Services
             SetWIAProperty(imgProcess.Filters[imgProcess.Filters.Count].Properties, "FormatID", formatId);
             image = imgProcess.Apply(image);
             return image;
+        }
+
+        public static List<byte[]> ConvertTiffToJpeg(ImageFile image)
+        {
+            List<byte[]> imgs = new List<byte[]>();
+            var imageBytes = (byte[])image.FileData.get_BinaryData();
+            var ms = new MemoryStream(imageBytes);
+            var imageFile = Image.FromStream(ms);
+            FrameDimension frameDimensions = new FrameDimension(imageFile.FrameDimensionsList[0]);
+            int frameNum = imageFile.GetFrameCount(frameDimensions);
+            for (int frame = 0; frame < frameNum; frame++)
+            {
+                imageFile.SelectActiveFrame(frameDimensions, frame);
+                using (Bitmap bmp = new Bitmap(imageFile))
+                {
+                    ImageConverter converter = new ImageConverter();
+                    imgs.Add((byte[])converter.ConvertTo(bmp, typeof(byte[])));
+                }
+            }
+            return imgs;
         }
 
         private enum ColorType
