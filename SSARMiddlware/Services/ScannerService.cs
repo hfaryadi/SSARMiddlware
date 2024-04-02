@@ -28,7 +28,7 @@ namespace SSARMiddlware.Services
                 if (scannerDevice == null)
                 {
                     Response.Code = System.Net.HttpStatusCode.NotFound;
-                    Response.Messages.Add("اسکنری انتخاب نشد");
+                    Response.Messages.Add("اسکنری انتخاب نشد.");
                     return null;
                 }
                 Item scannnerItem = scannerDevice.Items[1];
@@ -37,7 +37,7 @@ namespace SSARMiddlware.Services
                 if (scanResult == null)
                 {
                     Response.Code = System.Net.HttpStatusCode.NotFound;
-                    Response.Messages.Add("تصویری پیدا نشد");
+                    Response.Messages.Add("تصویری پیدا نشد.");
                     return null;
                 }
                 ImageFile image = (ImageFile)scanResult;
@@ -54,23 +54,23 @@ namespace SSARMiddlware.Services
 
                 if (errorCode == 0x80210006)
                 {
-                    Response.Messages.Add("اسکنر مشغول است و یا آماده نمی باشد");
+                    Response.Messages.Add("اسکنر مشغول است و یا آماده نمی باشد.");
                 }
                 else if (errorCode == 0x80210064)
                 {
-                    Response.Messages.Add("اسکن لغو شد");
+                    Response.Messages.Add("اسکن لغو شد.");
                 }
                 else if (errorCode == 0x8021000C)
                 {
-                    Response.Messages.Add("تنظیمات اسکنر نادرست می باشد");
+                    Response.Messages.Add("تنظیمات اسکنر نادرست می باشد.");
                 }
                 else if (errorCode == 0x80210005)
                 {
-                    Response.Messages.Add("اسکنر خاموش است و یا به کامپیوتر متصل نیست");
+                    Response.Messages.Add("اسکنر خاموش است و یا به کامپیوتر متصل نیست.");
                 }
                 else if (errorCode == 0x80210001)
                 {
-                    Response.Messages.Add("خطای نا شناخته");
+                    Response.Messages.Add("خطای نا شناخته.");
                 }
                 return null;
             }

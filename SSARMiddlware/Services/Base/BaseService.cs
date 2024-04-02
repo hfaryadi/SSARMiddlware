@@ -47,7 +47,7 @@ namespace SSARMiddlware.Services.Base
         private void Reject()
         {
             Response.Code = System.Net.HttpStatusCode.Unauthorized;
-            Response.Messages.Add("توکن نا معتبر می باشد");
+            Response.Messages.Add("توکن نا معتبر می باشد.");
             Send();
         }
 
