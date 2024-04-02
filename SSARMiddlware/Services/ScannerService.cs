@@ -1,5 +1,6 @@
 ﻿using SSARMiddlware.Services.Base;
 using SSARMiddlware.ViewModels.Scanner;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -130,6 +131,7 @@ namespace SSARMiddlware.Services
                     ImageConverter converter = new ImageConverter();
                     Response.Data.Images.Add(new Page()
                     {
+                        Name = Guid.NewGuid().ToString().Replace("-", "") + ".jpg",
                         Header = "data:image/jpeg;base64,",
                         Image = (byte[])converter.ConvertTo(bmp, typeof(byte[]))
                     });

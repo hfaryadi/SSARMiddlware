@@ -13,6 +13,7 @@ namespace SSARMiddlware.ViewModels.Scanner
 
     internal class Page
     {
+        public string Name { get; set; }
         public string Header { get; set; }
         public byte[] Image { get; set; }
     }
