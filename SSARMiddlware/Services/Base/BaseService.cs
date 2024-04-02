@@ -27,8 +27,7 @@ namespace SSARMiddlware.Services.Base
             {
                 Response.Code = System.Net.HttpStatusCode.InternalServerError;
                 Response.Messages.Add(ex.Message.ToString());
-                var json = JsonConvert.SerializeObject(Response);
-                Send(json);
+                Send();
             }
         }
 
@@ -49,8 +48,7 @@ namespace SSARMiddlware.Services.Base
         {
             Response.Code = System.Net.HttpStatusCode.Unauthorized;
             Response.Messages.Add("توکن نا معتبر می باشد");
-            var json = JsonConvert.SerializeObject(Response);
-            Send(json);
+            Send();
         }
 
         private void Accept()
@@ -59,8 +57,10 @@ namespace SSARMiddlware.Services.Base
             {
                 Execute();
             }
-            var json = JsonConvert.SerializeObject(Response);
-            Send(json);
+            else
+            {
+                Send();
+            }
         }
 
         public virtual bool Validation()
@@ -71,6 +71,12 @@ namespace SSARMiddlware.Services.Base
         public virtual void Execute()
         {
 
+        }
+
+        public virtual void Send()
+        {
+            var json = JsonConvert.SerializeObject(Response);
+            Send(json);
         }
     }
 }

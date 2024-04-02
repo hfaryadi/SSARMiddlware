@@ -15,6 +15,7 @@ namespace SSARMiddlware.Services
                 ImageHeader = "data:image/jpeg;base64,",
                 Image = imgBase64
             };
+            Send();
         }
 
         private byte[] ScanDoc()

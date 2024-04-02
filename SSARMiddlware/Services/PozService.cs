@@ -24,6 +24,7 @@ namespace SSARMiddlware.Services
                 Price = Request.Price,
                 IsPaid = true
             };
+            Send();
         }
     }
 }
