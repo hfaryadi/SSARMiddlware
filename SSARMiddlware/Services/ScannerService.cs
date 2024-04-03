@@ -15,7 +15,10 @@ namespace SSARMiddlware.Services
         {
             Response.Data = new ScannerResponseViewModel();
             var image = ScanDoc();
-            ConvertTiffToJpeg(image);
+            if (image != null)
+            {
+                ConvertTiffToJpeg(image);
+            }
             Send();
         }
 
@@ -24,10 +27,10 @@ namespace SSARMiddlware.Services
             try
             {
                 CommonDialogClass commonDialogClass = new CommonDialogClass();
-                Device scannerDevice = commonDialogClass.ShowSelectDevice(WiaDeviceType.ScannerDeviceType, false, false);
+                Device scannerDevice = commonDialogClass.ShowSelectDevice(WiaDeviceType.ScannerDeviceType, false, true);
                 if (scannerDevice == null)
                 {
-                    Response.Code = System.Net.HttpStatusCode.NotFound;
+                    Response.Code = System.Net.HttpStatusCode.BadRequest;
                     Response.Messages.Add("اسکنری انتخاب نشد.");
                     return null;
                 }
@@ -37,40 +40,51 @@ namespace SSARMiddlware.Services
                 if (scanResult == null)
                 {
                     Response.Code = System.Net.HttpStatusCode.NotFound;
-                    Response.Messages.Add("تصویری پیدا نشد.");
+                    Response.Messages.Add("اسکن لغو شد.");
                     return null;
                 }
                 ImageFile image = (ImageFile)scanResult;
-                //var convertedImage = ConvertImage(image, WIA.FormatID.wiaFormatTIFF);
-                //return ConvertTiffToJpeg(image);
+                //var convertedImage = ConvertImage(image, WIA.FormatID.wiaFormatJPEG);
                 return image;
             }
             catch (COMException ex)
             {
-                Response.Code = System.Net.HttpStatusCode.InternalServerError;
-                Response.Messages.Add(ex.ToString());
-
                 uint errorCode = (uint)ex.ErrorCode;
-
-                if (errorCode == 0x80210006)
+                switch (errorCode)
                 {
-                    Response.Messages.Add("اسکنر مشغول است و یا آماده نمی باشد.");
-                }
-                else if (errorCode == 0x80210064)
-                {
-                    Response.Messages.Add("اسکن لغو شد.");
-                }
-                else if (errorCode == 0x8021000C)
-                {
-                    Response.Messages.Add("تنظیمات اسکنر نادرست می باشد.");
-                }
-                else if (errorCode == 0x80210005)
-                {
-                    Response.Messages.Add("اسکنر خاموش است و یا به کامپیوتر متصل نیست.");
-                }
-                else if (errorCode == 0x80210001)
-                {
-                    Response.Messages.Add("خطای نا شناخته.");
+                    case 0x80210001:
+                        Response.Code = System.Net.HttpStatusCode.InternalServerError;
+                        Response.Messages.Add("خطای نا شناخته.");
+                        break;
+                    case 0x80210003:
+                        Response.Code = System.Net.HttpStatusCode.NotFound;
+                        Response.Messages.Add("موردی برای اسکن وجود ندارد.");
+                        break;
+                    case 0x80210005:
+                        Response.Code = System.Net.HttpStatusCode.NotFound;
+                        Response.Messages.Add("اسکنر خاموش است و یا به رایانه متصل نیست.");
+                        break;
+                    case 0x80210006:
+                        Response.Code = System.Net.HttpStatusCode.NotFound;
+                        Response.Messages.Add("اسکنر مشغول است و یا آماده نمی باشد.");
+                        break;
+                    case 0x80210064:
+                        Response.Code = System.Net.HttpStatusCode.BadRequest;
+                        Response.Messages.Add("اسکن لغو شد.");
+                        break;
+                    case 0x8021000C:
+                        Response.Code = System.Net.HttpStatusCode.BadRequest;
+                        Response.Messages.Add("تنظیمات اسکنر نادرست می باشد.");
+                        break;
+                    case 0x80072EFD:
+                    case 2149646357:
+                        Response.Code = System.Net.HttpStatusCode.NotFound;
+                        Response.Messages.Add("اسکنری به رایانه متصل نیست.");
+                        break;
+                    default:
+                        Response.Code = System.Net.HttpStatusCode.InternalServerError;
+                        Response.Messages.Add(ex.ToString());
+                        break;
                 }
                 return null;
             }
@@ -107,6 +121,10 @@ namespace SSARMiddlware.Services
 
         private ImageFile ConvertImage(ImageFile image, string formatId)
         {
+            if (image == null || string.IsNullOrWhiteSpace(formatId))
+            {
+                return null;
+            }
             ImageProcess imgProcess = new ImageProcess();
             object convertFilter = "Convert";
             string convertFilterID = imgProcess.FilterInfos.get_Item(ref convertFilter).FilterID;
@@ -116,8 +134,12 @@ namespace SSARMiddlware.Services
             return image;
         }
 
-        public void ConvertTiffToJpeg(ImageFile image)
+        private void ConvertTiffToJpeg(ImageFile image)
         {
+            if (image == null)
+            {
+                return;
+            }
             var imageBytes = (byte[])image.FileData.get_BinaryData();
             var ms = new MemoryStream(imageBytes);
             var imageFile = Image.FromStream(ms);
